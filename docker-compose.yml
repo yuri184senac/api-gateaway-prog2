@@ -1,0 +1,32 @@
+services:
+  mysql:
+    container_name: swm-mysql
+    restart: always
+    image: mysql:5.7
+    networks:
+      - swmnetwork
+    ports:
+      - "${DB_PORT}:${DB_PORT}"
+    volumes:
+      - ./volumes/mysql:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+  rabbit:
+    container_name: swm-rabbit
+    restart: always
+    image: rabbitmq:3-management
+    ports:
+      - "${RABBIT_PORT}:${RABBIT_PORT}"
+      - "${RABBIT_MANAGEMENT_PORT}:${RABBIT_MANAGEMENT_PORT}"
+    volumes:
+      - ./volumes/rabbit:/data
+    networks:
+      - swmnetwork
+
+networks:
+  swmnetwork:
+    driver: bridge
